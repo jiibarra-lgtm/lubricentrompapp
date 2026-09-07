@@ -20,12 +20,12 @@ document.getElementById("form-buscar").addEventListener("submit", async (e) => {
 
   const { data: vehiculo, error } = await supabase
     .from("vehiculos")
-    .select("id, patente, marca, modelo, km_ultimo_service, tipo_combustible, cliente_id, clientes ( telefono )")
+    .select("id, patente, marca, modelo, anio, km_ultimo_service, tipo_combustible, cliente_id, clientes ( nombre, telefono )")
     .eq("patente", patente)
     .maybeSingle();
 
   if (error || !vehiculo) {
-    mensajeError.textContent = "No encontramos un auto con esa patente.";
+    mensajeError.textContent = "No encontramos un auto con esa patente. ¿Ya lo registraste?";
     return;
   }
 
@@ -45,7 +45,7 @@ document.getElementById("form-buscar").addEventListener("submit", async (e) => {
   renderResultado(vehiculo, historial?.[0]);
 });
 
-function renderResultado(vehiculo, ultimoService) {
+export function renderResultado(vehiculo, ultimoService, mensajeBienvenida = null) {
   const cont = document.getElementById("resultado");
 
   const nombreFiltroCombustible = vehiculo.tipo_combustible === "gasoil" ? "Filtro de gasoil" : "Filtro de nafta";
@@ -61,9 +61,10 @@ function renderResultado(vehiculo, ultimoService) {
   const proximoServiceKm = ultimoService?.proximo_service_km || (kmActual ? kmActual + 10000 : null);
 
   cont.innerHTML = `
+    ${mensajeBienvenida ? `<div class="banner-exito">✅ ${mensajeBienvenida}</div>` : ""}
     <div class="auto-card">
       <h2>Mi auto</h2>
-      <p class="auto-modelo">${vehiculo.marca || ""} ${vehiculo.modelo || ""}</p>
+      <p class="auto-modelo">${vehiculo.marca || ""} ${vehiculo.modelo || ""} ${vehiculo.anio || ""}</p>
       <p class="auto-patente">${vehiculo.patente}</p>
 
       <div class="dato-fila">
@@ -75,7 +76,7 @@ function renderResultado(vehiculo, ultimoService) {
       ${
         itemsRealizados.length
           ? `<ul class="checklist">${itemsRealizados.map((i) => `<li>✅ ${i}</li>`).join("")}</ul>`
-          : `<p class="sin-datos">Todavía no hay un service registrado para este auto.</p>`
+          : `<p class="sin-datos">Todavía no hay un service registrado para este auto. Cuando vengas a Lubricentro MP, lo vamos a cargar acá.</p>`
       }
 
       ${
@@ -89,10 +90,11 @@ function renderResultado(vehiculo, ultimoService) {
         <strong>${proximoServiceKm ? proximoServiceKm.toLocaleString("es-AR") + " km" : "A confirmar"}</strong>
       </div>
 
-      <a href="https://wa.me/541151656144" target="_blank" class="btn-cta grande" style="display:block; text-align:center; margin-top:1.2rem;">
+      <a href="https://wa.me/541151656144" target="_blank" class="btn-primario" style="display:block; text-align:center; margin-top:1.2rem; text-decoration:none;">
         Consultar por WhatsApp
       </a>
     </div>
   `;
   cont.hidden = false;
+  cont.scrollIntoView({ behavior: "smooth", block: "start" });
 }
