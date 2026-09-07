@@ -52,6 +52,11 @@ document.getElementById("form-registrar").addEventListener("submit", async (e) =
   renderResultado(
     { ...vehiculo, clientes: { nombre, telefono } },
     null,
-    "¡Listo! Tu auto ya está registrado. La próxima vez que vengas a hacerte un service, va a quedar reflejado acá."
+    null,
+    []
+  );
+  document.getElementById("resultado").querySelector(".auto-card")?.insertAdjacentHTML(
+    "afterbegin",
+    `<div class="banner-exito">✅ ¡Listo! Tu auto ya está registrado. La próxima vez que vengas a hacerte un service, va a quedar reflejado acá.</div>`
   );
 });
