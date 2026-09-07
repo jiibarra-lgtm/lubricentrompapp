@@ -243,6 +243,7 @@ input:focus, select:focus { outline: none; border-color: var(--primario); }
   z-index: 500;
   padding: 1.5rem;
 }
+.pwa-gate[hidden] { display: none; }
 .pwa-gate-box {
   background: white;
   border-radius: 20px;

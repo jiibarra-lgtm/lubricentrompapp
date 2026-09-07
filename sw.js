@@ -1,6 +1,6 @@
 // subir este número cada vez que se hagan cambios importantes al sitio,
 // así el navegador descarta el cache viejo automáticamente
-const CACHE = "mi-auto-v2";
+const CACHE = "mi-auto-v3";
 const ARCHIVOS = ["/", "/index.html", "/css/style.css", "/manifest.json"];
 
 self.addEventListener("install", (e) => {
