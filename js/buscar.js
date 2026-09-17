@@ -91,10 +91,25 @@ document.getElementById("form-buscar").addEventListener("submit", async (e) => {
 
   await mostrarAutos(todosLosAutos?.length ? todosLosAutos : [vehiculo], vehiculo.id);
 
-  // suscribe silenciosamente a notificaciones push para este cliente si el
-  // permiso ya está concedido (se pidió en el gate de instalación de la PWA)
-  activarNotificacionesPush(vehiculo.cliente_id);
+  // suscribe a notificaciones push para este cliente si el permiso ya está
+  // concedido (se pidió en el gate de instalación de la PWA)
+  const resultadoPush = await activarNotificacionesPush(vehiculo.cliente_id);
+  mostrarEstadoNotificaciones(resultadoPush);
 });
+
+export function mostrarEstadoNotificaciones(resultado) {
+  const cont = document.getElementById("ficha-auto-actual") || document.getElementById("resultado");
+  if (!cont) return;
+  const card = cont.querySelector(".auto-card") || cont;
+
+  let mensaje = "";
+  if (resultado.ok) mensaje = `<div class="banner-exito" style="font-size:0.85rem;">🔔 Notificaciones activadas para este vehículo.</div>`;
+  else if (resultado.motivo === "sin-permiso") mensaje = `<div class="mensaje-error" style="font-size:0.85rem;">⚠️ No vas a recibir avisos: el permiso de notificaciones no está activado. Volvé a instalar la app y aceptalo.</div>`;
+  else if (resultado.motivo === "sin-soporte") mensaje = `<div class="mensaje-error" style="font-size:0.85rem;">⚠️ Tu navegador no soporta notificaciones push.</div>`;
+  else mensaje = `<div class="mensaje-error" style="font-size:0.85rem;">⚠️ No se pudo activar la notificación (${resultado.motivo}). Probá cerrar y volver a abrir la app.</div>`;
+
+  card.insertAdjacentHTML("afterbegin", mensaje);
+}
 
 async function mostrarAutos(autos, idSeleccionado) {
   const resultado = document.getElementById("resultado");

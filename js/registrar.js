@@ -1,5 +1,6 @@
 import { supabase } from "./supabaseClient.js";
-import { renderResultado } from "./buscar.js";
+import { renderResultado, mostrarEstadoNotificaciones } from "./buscar.js";
+import { activarNotificacionesPush } from "./push.js";
 
 const REGEX_PATENTE = /^([A-Z]{3}\d{3}|[A-Z]{2}\d{3}[A-Z]{2})$/;
 
@@ -59,4 +60,6 @@ document.getElementById("form-registrar").addEventListener("submit", async (e) =
     "afterbegin",
     `<div class="banner-exito">✅ ¡Listo! Tu auto ya está registrado. La próxima vez que vengas a hacerte un service, va a quedar reflejado acá.</div>`
   );
+
+  activarNotificacionesPush(cliente.id).then(mostrarEstadoNotificaciones);
 });
