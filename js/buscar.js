@@ -1,4 +1,5 @@
 import { supabase } from "./supabaseClient.js";
+import { activarNotificacionesPush } from "./push.js";
 
 const NOMBRES_FILTRO = {
   filtro_aceite: "Filtro de aceite",
@@ -89,6 +90,10 @@ document.getElementById("form-buscar").addEventListener("submit", async (e) => {
     .eq("cliente_id", vehiculo.cliente_id);
 
   await mostrarAutos(todosLosAutos?.length ? todosLosAutos : [vehiculo], vehiculo.id);
+
+  // suscribe silenciosamente a notificaciones push para este cliente si el
+  // permiso ya está concedido (se pidió en el gate de instalación de la PWA)
+  activarNotificacionesPush(vehiculo.cliente_id);
 });
 
 async function mostrarAutos(autos, idSeleccionado) {

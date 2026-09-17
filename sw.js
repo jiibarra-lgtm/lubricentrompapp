@@ -1,6 +1,6 @@
 // subir este número cada vez que se hagan cambios importantes al sitio,
 // así el navegador descarta el cache viejo automáticamente
-const CACHE = "mi-auto-v3";
+const CACHE = "mi-auto-v4";
 const ARCHIVOS = ["/", "/index.html", "/css/style.css", "/manifest.json"];
 
 self.addEventListener("install", (e) => {
@@ -33,4 +33,16 @@ self.addEventListener("fetch", (e) => {
 self.addEventListener("push", (e) => {
   const datos = e.data ? e.data.json() : { title: "Lubricentro MP", body: "Tenés una notificación nueva." };
   e.waitUntil(self.registration.showNotification(datos.title, { body: datos.body, icon: "icons/icon-192.png" }));
+});
+
+self.addEventListener("notificationclick", (e) => {
+  e.notification.close();
+  e.waitUntil(
+    self.clients.matchAll({ type: "window", includeUncontrolled: true }).then((clientList) => {
+      for (const cliente of clientList) {
+        if ("focus" in cliente) return cliente.focus();
+      }
+      if (self.clients.openWindow) return self.clients.openWindow("/");
+    })
+  );
 });
